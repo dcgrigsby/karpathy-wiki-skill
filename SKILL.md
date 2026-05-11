@@ -210,11 +210,22 @@ grep "^## \[" wiki/log.md | tail -5
 
 ## Image handling
 
-Obsidian's attachment folder is `raw/assets/`. Web Clipper images and any other Obsidian-downloaded images land there. When ingesting a clipped article that references images:
+Obsidian's attachment folder is `raw/assets/`. Web Clipper images and any other Obsidian-downloaded images land there.
+
+**Reading images during ingest.** When the source already has images on disk:
 
 - Read the markdown text first.
 - If image content is needed for the summary, open specific images via the Read tool (Read can handle PNG/JPG).
 - Don't try to read all referenced images preemptively — open them on demand.
+
+**Capturing images during programmatic fetch.** Web Clipper auto-downloads inline images; programmatic fetchers (WebFetch, headless browsers, custom scripts) typically don't — they return markdown/HTML with remote `<img>` URLs that bitrot over time as CDNs move and posts get edited. If your ingest path doesn't auto-download images, follow this convention:
+
+- Save substantive images (figures, diagrams, screenshots referenced by the prose, paper figures) to `raw/assets/<source-slug>/`. Rewrite the `<img>` refs in your captured markdown to local relative paths.
+- Skip decorative chrome (hero shots, author photos, social-share badges, ad units). When unclear, include — bytes are cheap, broken links are not.
+- Per-source subdir keeps unwind clean: `rm -r raw/assets/<source-slug>/` removes everything when the source goes.
+- For sources at risk of disappearing (small blogs, breaking news, controversial posts), optionally save a full-page screenshot at `raw/assets/<source-slug>/_fullpage.png` as bitrot insurance.
+
+The actual fetcher (Web Clipper, headless browser, custom script, etc.) is up to you — a personal-workflow skill may layer specific tooling on top of this convention.
 
 ## Workflow defaults
 
