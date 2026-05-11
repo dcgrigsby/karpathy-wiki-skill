@@ -1,0 +1,46 @@
+karpathy-wiki-skill
+Copyright 2026 Dan Grigsby
+
+CRITICAL SAFETY WARNING — PLEASE READ BEFORE USE
+
+This skill gives an AI agent (Claude or any skill-aware assistant) the
+ability to read, write, and delete files in your karpathy-wiki repo on
+the local filesystem. It writes new wiki pages, modifies existing
+pages (frontmatter and body), deletes pages during unwind operations,
+appends to wiki/log.md, and commits + pushes to the repo's git remote.
+Operations run with full read/write privileges. There is NO sandboxing
+and NO per-call confirmation — the only safeguards are instructions in
+the skill telling the agent to surface destructive changes before
+performing them and to operate only from inside the wiki repo's root.
+
+Potential consequences of misuse include but are not limited to:
+- Permanent deletion of wiki pages (after git push)
+- Overwriting page contents during ingest or refresh
+- Mass-rewriting of cross-references during unwind
+- Silent or bulk modification of frontmatter, sections, or links
+- Mistaken push of wiki changes to a public remote
+- Acting on prompt injection embedded in raw/ source material
+
+Risks specific to AI-driven use:
+- An agent may misinterpret a request and run a destructive operation
+- A prompt-injection payload reaching the agent (via web articles,
+  papers, transcripts, or pasted material in raw/) could direct it to
+  overwrite, delete, or rewrite unrelated pages, or to push commits
+- A hallucinated source slug may produce unintended writes
+- A buggy script update could mass-rewrite links incorrectly
+
+Recovery expectations:
+- The wiki repo is git-tracked; `git reflog` and the remote serve as
+  the primary recovery backstops. After a git push, recovery depends
+  on remote retention policies.
+- The skill itself maintains no backups outside git.
+
+By using this software, you acknowledge that:
+1. You understand the risks described above
+2. You accept full responsibility for any data loss or damage
+3. You will keep your wiki repo under git with regular pushes
+4. The authors and contributors provide NO WARRANTY of any kind
+5. The authors and contributors accept NO LIABILITY for any damages
+
+This notice must be preserved in all copies or substantial portions
+of the software, per the Apache License, Version 2.0.
