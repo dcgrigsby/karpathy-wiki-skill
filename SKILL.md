@@ -83,10 +83,10 @@ Triggered by the user saying "lint the wiki" or on periodic review.
 
 Triggered by the user saying something like "unwind `<source-slug>`" or "remove the X paper" — when a previously ingested source no longer earns its keep.
 
-1. Run `scripts/unwind-preview.py <source-slug>` to generate a punch list. The script classifies pages by their frontmatter `sources:` field:
-   - **Delete (sole source)** — pages that list only the unwind target. Truly orphaned by the removal.
+1. Scan `wiki/*.md` and classify pages affected by removing the source — read each page's frontmatter `sources:` field and grep bodies for `[[<source-slug>]]`. Group into a punch list:
+   - **Delete (sole source)** — pages whose frontmatter `sources:` lists only the unwind target. Truly orphaned by the removal.
    - **Scrub (multi-sourced)** — pages with the target plus other sources. Remove from frontmatter `sources:`; prune target-anchored prose (often a section grounded in target's empirical results — usually delete the whole section rather than leaving a dangling claim).
-   - **Inbound body references** — `[[<target>]]` mentions in pages we're keeping. Re-read the surrounding sentence; the link can usually be dropped or the sentence pruned.
+   - **Inbound body references** — `[[<source-slug>]]` mentions in pages we're keeping. Re-read the surrounding sentence; the link can usually be dropped or the sentence pruned.
 2. Show the punch list to the user and flag judgment calls explicitly. The most common one: a "scrub" candidate written as a general pattern with the target as the only example — propose delete (clean unwind) or keep+scrub (forward-looking pattern page) and let the user choose.
 3. Execute on approval. Delete files via `git rm`. For scrubs and inbound refs, edit prose carefully — don't leave dangling stats with no source.
 4. Update `wiki/index.md` to remove deleted pages from the catalog.
@@ -161,7 +161,6 @@ Rules:
 - **qmd** — local hybrid BM25/vector/rerank search. Invoked from inside the wiki repo via Bash (`qmd query`, `qmd update`, `qmd embed`). Run `qmd update && qmd embed` after every ingest pass. If the qmd CLI is installed, its bundled agent skill (loaded via `npx skills add`) documents query syntax; otherwise `qmd query --help`.
 - **Marp** (Obsidian plugin) — renders markdown slide decks. Useful for `synthesis` pages that warrant slide format.
 - **Dataview** (Obsidian plugin) — runs queries over frontmatter. Often used in `index.md` and per-type overview pages.
-- **`scripts/unwind-preview.py`** (bundled with this skill) — classifies pages affected by removing a source. Run as `unwind-preview.py <source-slug>` from the wiki repo root.
 - **Task systems** — wikis are often fed by an external task queue (OmniFocus, Linear, Things, etc.). The convention is to stamp source pages with a `<system>-task-id:` field for dedup. The integration itself lives in a personal-workflow skill, not here.
 
 ## Git workflow

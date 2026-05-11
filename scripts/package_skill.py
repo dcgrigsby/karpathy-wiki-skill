@@ -21,7 +21,6 @@ INCLUDE = [
     "README.md",
     "LICENSE",
     "NOTICE",
-    "scripts/unwind-preview.py",
     "references",
 ]
 

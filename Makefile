@@ -1,13 +1,9 @@
-.PHONY: help test package clean
+.PHONY: help package clean
 
 help:
 	@echo "Targets:"
-	@echo "  make test     - Run mechanical test suite for unwind-preview.py"
 	@echo "  make package  - Build .skill bundle for distribution"
 	@echo "  make clean    - Remove generated artifacts"
-
-test:
-	python3 scripts/test_unwind_preview.py
 
 package:
 	python3 scripts/package_skill.py .
